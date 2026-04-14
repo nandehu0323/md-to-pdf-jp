@@ -34,6 +34,12 @@ node src/cli.mjs report.md -o out.pdf --font-size 8.5 --margin 12 --margin-botto
 node src/cli.mjs paper.md -o paper.pdf --latex
 ```
 
+見出しが既に `## 1.` `## 2.` のように番号入りのとき、CSS の自動番号と二重になるので **`--latex-no-auto-numbers`** を付けます。
+
+```bash
+node src/cli.mjs long-architecture.md -o out.pdf --latex --latex-no-auto-numbers
+```
+
 `##` が1つも無い Markdown では分割できないため、通常の1段レイアウトのままです。Web UI でも同様のチェックボックスがあります。
 
 グローバルに `bin` を使う場合は `npm link` 後:

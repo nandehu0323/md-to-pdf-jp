@@ -69,7 +69,17 @@
 
         <label class="field field--check">
           <input type="checkbox" id="latexArticleStyle" />
-          <span>LaTeX article 風（表題〜先頭の ## まで1段、以降2段＋節番号）</span>
+          <span
+            >LaTeX article 風（表題〜先頭の <code>##</code> まで1段、以降は2段組）</span
+          >
+        </label>
+
+        <label class="field field--check field--sub" id="latexAutoNumWrap">
+          <input type="checkbox" id="latexAutoSectionNumbers" checked />
+          <span
+            >見出しに自動で 1, 2, … を付与する（本文が既に「## 1.」のときは
+            <strong>オフ</strong>）</span
+          >
         </label>
 
         <div class="actions">

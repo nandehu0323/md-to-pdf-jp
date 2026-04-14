@@ -13,6 +13,7 @@
  *   marginsMm: { top: number, right: number, bottom: number, left: number },
  *   footerFontPt: number,
  *   latexArticleStyle: boolean,
+ *   latexAutoSectionNumbers: boolean,
  * }} LayoutOptions
  */
 
@@ -49,6 +50,7 @@ export function resolveLayout(partial = {}) {
   );
 
   const latexArticleStyle = boolish(partial.latexArticleStyle, false);
+  const latexAutoSectionNumbers = boolish(partial.latexAutoSectionNumbers, true);
 
   return {
     fontSizePt,
@@ -59,6 +61,7 @@ export function resolveLayout(partial = {}) {
     marginsMm,
     footerFontPt,
     latexArticleStyle,
+    latexAutoSectionNumbers,
   };
 }
 
@@ -95,6 +98,7 @@ export function parseLayoutFromBody(raw) {
     marginBottomMm: num(o.marginBottomMm),
     footerFontPt: num(o.footerFontPt),
     latexArticleStyle: o.latexArticleStyle,
+    latexAutoSectionNumbers: o.latexAutoSectionNumbers,
   });
 }
 

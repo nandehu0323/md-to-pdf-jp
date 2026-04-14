@@ -20,7 +20,7 @@ const GOOGLE_FONTS_HREF =
 export function buildPaperCss(layout) {
   const { marginsMm, fontSizePt, maxWidthRem, lineHeight, latexArticleStyle } =
     layout;
-  const latexBlock = latexArticleStyle ? latexArticleCss() : "";
+  const latexBlock = latexArticleStyle ? latexArticleCss(layout) : "";
   return `
 :root {
   --ink: #111;
@@ -252,8 +252,36 @@ ${latexBlock}
 `;
 }
 
-/** LaTeX article 風（表題ブロック 1 段・以降 2 段・節番号）。`.latex-article` 付与時のみ有効 */
-function latexArticleCss() {
+/**
+ * LaTeX article 風（表題ブロック 1 段・以降 2 段）。
+ * `latexAutoSectionNumbers` が false のときは 2 段のみ（見出し本文に「1.」があるドキュメント向け）。
+ * @param {import("./layout-options.mjs").LayoutOptions} layout
+ */
+function latexArticleCss(layout) {
+  const autoNum = layout.latexAutoSectionNumbers !== false;
+  const sectionCounters = autoNum
+    ? `
+main.paper.latex-article .latex-columns {
+  counter-reset: latex-section;
+}
+main.paper.latex-article .latex-columns h2 {
+  counter-increment: latex-section;
+  counter-reset: latex-subsection;
+}
+main.paper.latex-article .latex-columns h2::before {
+  content: counter(latex-section) " ";
+  font-weight: 700;
+}
+main.paper.latex-article .latex-columns h3 {
+  counter-increment: latex-subsection;
+}
+main.paper.latex-article .latex-columns h3::before {
+  content: counter(latex-section) "." counter(latex-subsection) " ";
+  font-weight: 700;
+}
+`
+    : "";
+
   return `
 /* --- LaTeX article 風（HTML/CSS での近似） --- */
 main.paper.latex-article {
@@ -296,7 +324,6 @@ main.paper.latex-article .latex-masthead blockquote p {
 }
 
 main.paper.latex-article .latex-columns {
-  counter-reset: latex-section;
   -webkit-column-count: 2;
   column-count: 2;
   -webkit-column-gap: 5.5mm;
@@ -306,7 +333,7 @@ main.paper.latex-article .latex-columns {
   text-align: justify;
   text-justify: inter-character;
 }
-
+${sectionCounters}
 main.paper.latex-article .latex-columns h2,
 main.paper.latex-article .latex-columns h3 {
   break-after: avoid;
@@ -315,8 +342,6 @@ main.paper.latex-article .latex-columns h3 {
 }
 
 main.paper.latex-article .latex-columns h2 {
-  counter-increment: latex-section;
-  counter-reset: latex-subsection;
   border-bottom: none;
   padding-bottom: 0;
   font-size: 1.08rem;
@@ -325,21 +350,10 @@ main.paper.latex-article .latex-columns h2 {
   text-align: left;
 }
 
-main.paper.latex-article .latex-columns h2::before {
-  content: counter(latex-section) " ";
-  font-weight: 700;
-}
-
 main.paper.latex-article .latex-columns h3 {
-  counter-increment: latex-subsection;
   font-size: 0.98rem;
   font-weight: 700;
   margin: 0.85rem 0 0.4rem;
-}
-
-main.paper.latex-article .latex-columns h3::before {
-  content: counter(latex-section) "." counter(latex-subsection) " ";
-  font-weight: 700;
 }
 
 main.paper.latex-article .latex-columns table,

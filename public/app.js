@@ -11,6 +11,10 @@ const marginBottomMm = document.getElementById("marginBottomMm");
 const maxWidthRem = document.getElementById("maxWidthRem");
 const lineHeight = document.getElementById("lineHeight");
 const latexArticleStyle = document.getElementById("latexArticleStyle");
+const latexAutoSectionNumbers = document.getElementById(
+  "latexAutoSectionNumbers"
+);
+const latexAutoNumWrap = document.getElementById("latexAutoNumWrap");
 
 const fontSizeVal = document.getElementById("fontSizeVal");
 const marginVal = document.getElementById("marginVal");
@@ -48,7 +52,14 @@ function readLayout() {
     maxWidthRem: Number(maxWidthRem.value),
     lineHeight: Number(lineHeight.value),
     latexArticleStyle: Boolean(latexArticleStyle.checked),
+    latexAutoSectionNumbers: Boolean(latexAutoSectionNumbers.checked),
   };
+}
+
+function syncLatexSubOptions() {
+  const on = latexArticleStyle.checked;
+  latexAutoNumWrap.classList.toggle("is-disabled", !on);
+  latexAutoSectionNumbers.disabled = !on;
 }
 
 function syncLabels() {
@@ -223,6 +234,9 @@ async function init() {
       if (typeof L.latexArticleStyle === "boolean") {
         latexArticleStyle.checked = L.latexArticleStyle;
       }
+      if (typeof L.latexAutoSectionNumbers === "boolean") {
+        latexAutoSectionNumbers.checked = L.latexAutoSectionNumbers;
+      }
     }
   } catch {
     /* 既定 HTML のまま */
@@ -230,6 +244,7 @@ async function init() {
 
   mdEl.value = SAMPLE;
   syncLabels();
+  syncLatexSubOptions();
 
   [
     fontSizePt,
@@ -242,8 +257,15 @@ async function init() {
     schedulePreview();
   }));
 
-  latexArticleStyle.addEventListener("change", schedulePreview);
-  latexArticleStyle.addEventListener("input", schedulePreview);
+  latexArticleStyle.addEventListener("change", () => {
+    syncLatexSubOptions();
+    schedulePreview();
+  });
+  latexArticleStyle.addEventListener("input", () => {
+    syncLatexSubOptions();
+    schedulePreview();
+  });
+  latexAutoSectionNumbers.addEventListener("change", schedulePreview);
 
   docTitle.addEventListener("input", schedulePreview);
   mdEl.addEventListener("input", schedulePreview);

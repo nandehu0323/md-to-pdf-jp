@@ -18,6 +18,7 @@ function parseArgs(argv) {
     marginMm: null,
     marginBottomMm: null,
     latex: false,
+    latexNoAutoNumbers: false,
   };
   const rest = [...argv];
   while (rest.length) {
@@ -44,6 +45,10 @@ function parseArgs(argv) {
     }
     if (a === "--latex") {
       args.latex = true;
+      continue;
+    }
+    if (a === "--latex-no-auto-numbers") {
+      args.latexNoAutoNumbers = true;
       continue;
     }
     if (a === "-h" || a === "--help") {
@@ -79,7 +84,9 @@ function printHelp() {
   コード: JetBrains Mono
 
 --latex:
-  LaTeX article 風（先頭の ## より前を1段、以降を2段＋節番号）。## が無いと通常レイアウトのままです。
+  LaTeX article 風（先頭の ## より前を1段、以降を2段。節番号は CSS で付与）。
+--latex-no-auto-numbers:
+  --latex と併用。見出しに「1」「1.1」を自動付与しない（本文が「## 1.」形式のとき向け）。
 
 Web UI:
   npm run web のあと http://127.0.0.1:3847/ でブラウザから調整・PDF 保存
@@ -112,6 +119,7 @@ async function main() {
   if (Number.isFinite(args.marginBottomMm))
     layout.marginBottomMm = args.marginBottomMm;
   if (args.latex) layout.latexArticleStyle = true;
+  if (args.latexNoAutoNumbers) layout.latexAutoSectionNumbers = false;
 
   const pdfBuffer = await markdownToPdfBuffer(md, { title, layout });
   await writeFile(outputPath, pdfBuffer);
