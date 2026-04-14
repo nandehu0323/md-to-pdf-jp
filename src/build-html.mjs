@@ -297,8 +297,11 @@ main.paper.latex-article .latex-masthead blockquote p {
 
 main.paper.latex-article .latex-columns {
   counter-reset: latex-section;
+  -webkit-column-count: 2;
   column-count: 2;
+  -webkit-column-gap: 5.5mm;
   column-gap: 5.5mm;
+  -webkit-column-fill: balance;
   column-fill: balance;
   text-align: justify;
   text-justify: inter-character;

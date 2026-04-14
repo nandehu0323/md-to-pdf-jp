@@ -112,7 +112,8 @@
         <h2>プレビュー</h2>
         <p class="hint">印刷時のフォントは Google Fonts を読み込みます（初回のみ時間がかかることがあります）。</p>
       </div>
-      <iframe id="preview" title="プレビュー" sandbox="allow-same-origin allow-scripts"></iframe>
+      <!-- sandbox なし: srcdoc/Blob 上の段組・フォントがブラウザによって潰れるのを避ける -->
+      <iframe id="preview" title="プレビュー"></iframe>
     </section>
 
     <script type="module" src="/app.js"></script>

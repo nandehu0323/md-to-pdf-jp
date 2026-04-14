@@ -37,6 +37,8 @@ const SAMPLE = `# サンプル表題（LaTeX 風を ON にすると要旨が1段
 `;
 
 let previewTimer = null;
+/** @type {string | null} */
+let previewObjectUrl = null;
 
 function readLayout() {
   return {
@@ -80,8 +82,24 @@ async function runPreview() {
       throw new Error(j.error || res.statusText);
     }
     const html = await res.text();
-    preview.srcdoc = html;
-    statusEl.textContent = "プレビュー更新済み";
+    if (previewObjectUrl) {
+      URL.revokeObjectURL(previewObjectUrl);
+      previewObjectUrl = null;
+    }
+    preview.removeAttribute("srcdoc");
+    previewObjectUrl = URL.createObjectURL(
+      new Blob([html], { type: "text/html;charset=utf-8" })
+    );
+    preview.src = previewObjectUrl;
+
+    const layout = readLayout();
+    const hasLevel2Heading = /(^|\n)\s*##[^#]/m.test(mdEl.value);
+    if (layout.latexArticleStyle && !hasLevel2Heading) {
+      statusEl.textContent =
+        "プレビュー更新済み（LaTeX 風: Markdown に `## 節見出し` があると2段組・節番号が有効になります）";
+    } else {
+      statusEl.textContent = "プレビュー更新済み";
+    }
   } catch (e) {
     statusEl.textContent = "エラー: " + e.message;
   } finally {
@@ -225,6 +243,7 @@ async function init() {
   }));
 
   latexArticleStyle.addEventListener("change", schedulePreview);
+  latexArticleStyle.addEventListener("input", schedulePreview);
 
   docTitle.addEventListener("input", schedulePreview);
   mdEl.addEventListener("input", schedulePreview);

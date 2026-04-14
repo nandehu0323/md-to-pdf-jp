@@ -72,6 +72,11 @@ function boolish(v, fallback) {
   if (typeof v === "boolean") return v;
   if (v === "true" || v === 1 || v === "1") return true;
   if (v === "false" || v === 0 || v === "0") return false;
+  if (typeof v === "string") {
+    const s = v.trim().toLowerCase();
+    if (s === "true" || s === "yes" || s === "on") return true;
+    if (s === "false" || s === "no" || s === "off") return false;
+  }
   return fallback;
 }
 
