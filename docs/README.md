@@ -69,4 +69,4 @@ PDF 生成時に Google Fonts から取得します（ネットワーク接続�
 ## 関連ドキュメント
 
 - [PRD](./prd.md) — 目的とスコープ
-- [Design](./design.md) — 技術方針
+- [Design](./design.md) — 技術方針・**学術向け Markdown ツール（Quarto / Pandoc 等）との位置づけ**
