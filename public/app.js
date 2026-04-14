@@ -1,4 +1,5 @@
 const mdEl = document.getElementById("md");
+const mdFile = document.getElementById("mdFile");
 const preview = document.getElementById("preview");
 const docTitle = document.getElementById("docTitle");
 const btnPdf = document.getElementById("btnPdf");
@@ -155,6 +156,7 @@ async function init() {
   docTitle.addEventListener("input", schedulePreview);
   mdEl.addEventListener("input", schedulePreview);
   btnPdf.addEventListener("click", downloadPdf);
+  setupFileUpload();
 
   await runPreview();
 }
