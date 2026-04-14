@@ -8,15 +8,18 @@
 
 ## フォント選定
 
-- **Noto Sans JP**: 本文用。可読性が高く、ウェイト展開がある
-- **Shippori Mincho**: 見出し用。明朝で文書らしさを付与
+- **Noto Serif JP**: 本文・見出し。学術文書で一般的な明朝系で統一
 - **JetBrains Mono**: コードブロック用。ASCII の視認性が高い
 
-## スタイル方針
+## スタイル方針（論文調レイアウト）
 
-- `lang="ja"`、本文に `line-height: 1.75` 前後
-- `font-feature-settings: "palt"` でプロポーショナル寄せ（環境により無視される場合あり）
-- `@page` と `page.pdf` の margin を概ね一致させ、A4 固定
+- `main.paper` で最大幅（約 38rem）の単カラムを中央配置し、読み幅を抑える
+- 本文は `text-align: justify`（日本語の行末そろえ）とやや広い行間（約 1.9）
+- 先頭の `# 見出し` は表題として中央揃え・二重下線。`##` は下線で節を区切る
+- 段落は見出し直後を除き先頭字下げ（`p + p`）を付与
+- 引用（`blockquote`）は要旨・抄録風に上下罫線のみの落ち着いた体裁
+- ページ番号は Playwright の `footerTemplate`（`pageNumber`）で各ページ下部に付与
+- `@page` と `page.pdf` の margin を概ね一致させ、A4 固定。フッター用に下余白を広げる
 
 ## 依存関係
 

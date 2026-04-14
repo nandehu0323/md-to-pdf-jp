@@ -48,8 +48,7 @@ function printHelp() {
   md-to-pdf-jp notes.md --title "会議メモ"
 
 フォント（Google Fonts）:
-  本文: Noto Sans JP
-  見出し: Shippori Mincho
+  本文・見出し: Noto Serif JP（論文調の明朝）
   コード: JetBrains Mono
 `);
 }
@@ -91,11 +90,14 @@ async function main() {
     const pdfBuffer = await page.pdf({
       format: "A4",
       printBackground: true,
+      displayHeaderFooter: true,
+      headerTemplate: "<div></div>",
+      footerTemplate: `<div style="width:100%;font-size:9pt;text-align:center;color:#333;padding:0 8mm 2mm;font-family:'Hiragino Mincho ProN','Yu Mincho','Noto Serif JP',serif;"><span class="pageNumber"></span></div>`,
       margin: {
-        top: "22mm",
-        right: "20mm",
-        bottom: "24mm",
-        left: "20mm",
+        top: "24mm",
+        right: "24mm",
+        bottom: "32mm",
+        left: "24mm",
       },
       preferCSSPageSize: true,
     });

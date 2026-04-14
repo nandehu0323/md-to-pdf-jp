@@ -31,13 +31,16 @@ md-to-pdf-jp notes.md --title "会議メモ"
 
 `-o` を省略すると、入力ファイルと同じディレクトリに `<basename>.pdf` が出力されます。
 
+## レイアウト
+
+論文・レポートに近い体裁です（明朝ベースの単カラム、表題の中央配置、段落の字下げ、ページ番号など）。詳細は [design.md](./design.md) を参照してください。
+
 ## フォント（Google Fonts）
 
-| 用途   | フォント名        |
-| ------ | ----------------- |
-| 本文   | Noto Sans JP      |
-| 見出し | Shippori Mincho   |
-| コード | JetBrains Mono    |
+| 用途       | フォント名   |
+| ---------- | ------------ |
+| 本文・見出し | Noto Serif JP |
+| コード     | JetBrains Mono |
 
 PDF 生成時に Google Fonts から取得します（ネットワーク接続が必要です）。
 
