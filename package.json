@@ -2,18 +2,24 @@
   "name": "md-to-pdf-jp",
   "version": "1.0.0",
   "description": "Markdown を日本語向けに美しく組版した PDF に変換する CLI",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nandehu0323/md-to-pdf-jp.git"
+  },
   "type": "module",
   "bin": {
     "md-to-pdf-jp": "./src/cli.mjs"
   },
   "scripts": {
     "start": "node src/cli.mjs",
-    "pdf": "node src/cli.mjs"
+    "pdf": "node src/cli.mjs",
+    "web": "node src/server.mjs"
   },
   "engines": {
     "node": ">=18"
   },
   "dependencies": {
+    "express": "^4.21.0",
     "marked": "^15.0.0",
     "playwright": "^1.49.0"
   }

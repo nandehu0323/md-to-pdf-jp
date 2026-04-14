@@ -6,4 +6,6 @@ Markdown を日本語向け PDF に変換する CLI。詳細は [docs/README.md]
 npm install
 npx playwright install chromium
 node src/cli.mjs examples/sample.md -o out.pdf
+# ブラウザ UI（プレビュー・PDF ダウンロード）
+npm run web
 ```

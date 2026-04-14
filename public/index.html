@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>md-to-pdf-jp</title>
+    <link rel="stylesheet" href="/styles.css?v=1" />
+  </head>
+  <body>
+    <header class="top">
+      <h1>md-to-pdf-jp</h1>
+      <p class="lead">
+        Markdown を論文風 PDF にします。レイアウトを調整してプレビューし、PDF をダウンロードできます。
+      </p>
+    </header>
+
+    <div class="layout">
+      <aside class="controls" aria-label="レイアウト設定">
+        <label class="field">
+          <span>文書タイトル（ファイル名・HTML タイトル）</span>
+          <input type="text" id="docTitle" value="document" autocomplete="off" />
+        </label>
+
+        <label class="field">
+          <span>PDFエンジン</span>
+          <select id="renderer">
+            <option value="pandoc" selected>高品質（Pandoc + Tectonic）</option>
+            <option value="playwright">簡易（Playwright CSS近似）</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Pandoc PDF engine</span>
+          <select id="pdfEngine">
+            <option value="auto" selected>auto（xelatex > lualatex > tectonic）</option>
+            <option value="xelatex">xelatex</option>
+            <option value="lualatex">lualatex</option>
+            <option value="tectonic">tectonic</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>フォントサイズ <strong id="fontSizeVal">9</strong> pt</span>
+          <input
+            type="range"
+            id="fontSizePt"
+            min="7"
+            max="11"
+            step="0.25"
+            value="9"
+          />
+        </label>
+
+        <label class="field">
+          <span>上・左右の余白 <strong id="marginVal">14</strong> mm</span>
+          <input type="range" id="marginMm" min="8" max="24" step="1" value="14" />
+        </label>
+
+        <label class="field">
+          <span>下余白（ページ番号エリア含む）<strong id="marginBottomVal">24</strong> mm</span>
+          <input
+            type="range"
+            id="marginBottomMm"
+            min="16"
+            max="36"
+            step="1"
+            value="24"
+          />
+        </label>
+
+        <label class="field">
+          <span>本文カラム幅 <strong id="maxWidthVal">36</strong> rem</span>
+          <input type="range" id="maxWidthRem" min="28" max="42" step="1" value="36" />
+        </label>
+
+        <label class="field">
+          <span>行間 <strong id="lineHeightVal">1.85</strong></span>
+          <input
+            type="range"
+            id="lineHeight"
+            min="1.55"
+            max="2.05"
+            step="0.05"
+            value="1.85"
+          />
+        </label>
+
+        <label class="field field--check">
+          <input type="checkbox" id="latexArticleStyle" />
+          <span
+            >LaTeX article 風（表題〜先頭の <code>##</code> まで1段、以降は2段組）</span
+          >
+        </label>
+
+        <label class="field field--check field--sub" id="latexAutoNumWrap">
+          <input type="checkbox" id="latexAutoSectionNumbers" checked />
+          <span
+            >見出しに自動で 1, 2, … を付与する（本文が既に「## 1.」のときは
+            <strong>オフ</strong>）</span
+          >
+        </label>
+
+        <div class="actions">
+          <button type="button" id="btnPdf" class="btn primary">
+            PDF をダウンロード
+          </button>
+          <span id="status" class="status" role="status"></span>
+        </div>
+      </aside>
+
+      <section class="editor" aria-label="Markdown">
+        <div class="md-toolbar">
+          <label class="file-upload">
+            <span class="sr-only">Markdown ファイルを選ぶ</span>
+            <input
+              type="file"
+              id="mdFile"
+              accept=".md,.markdown,text/markdown,text/x-markdown"
+            />
+            <span class="file-upload__btn" aria-hidden="true">.md を読み込む</span>
+          </label>
+          <p class="md-toolbar__hint">
+            または下の編集欄にドラッグ＆ドロップ
+          </p>
+        </div>
+        <label class="field grow">
+          <span>Markdown</span>
+          <textarea
+            id="md"
+            rows="24"
+            spellcheck="false"
+            aria-label="Markdown ソース"
+          ></textarea>
+        </label>
+      </section>
+    </div>
+
+    <section class="preview-wrap" aria-label="プレビュー">
+      <div class="preview-head">
+        <h2>プレビュー</h2>
+        <p class="hint">印刷時のフォントは Google Fonts を読み込みます（初回のみ時間がかかることがあります）。</p>
+      </div>
+      <!-- sandbox なし: srcdoc/Blob 上の段組・フォントがブラウザによって潰れるのを避ける -->
+      <iframe id="preview" title="プレビュー"></iframe>
+    </section>
+
+    <script type="module" src="/app.js?v=1"></script>
+  </body>
+</html>
