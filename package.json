@@ -12,12 +12,14 @@
   },
   "scripts": {
     "start": "node src/cli.mjs",
-    "pdf": "node src/cli.mjs"
+    "pdf": "node src/cli.mjs",
+    "web": "node src/server.mjs"
   },
   "engines": {
     "node": ">=18"
   },
   "dependencies": {
+    "express": "^4.21.0",
     "marked": "^15.0.0",
     "playwright": "^1.49.0"
   }

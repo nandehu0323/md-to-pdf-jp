@@ -3,6 +3,8 @@
  * 論文調: Noto Serif JP（本文・見出し）、JetBrains Mono（コード）
  */
 
+import { resolveLayout } from "./layout-options.mjs";
+
 const GOOGLE_FONTS_HREF =
   "https://fonts.googleapis.com/css2?" +
   [
@@ -11,7 +13,12 @@ const GOOGLE_FONTS_HREF =
     "display=swap",
   ].join("&");
 
-const DEFAULT_CSS = `
+/**
+ * @param {import("./layout-options.mjs").LayoutOptions} layout
+ */
+export function buildPaperCss(layout) {
+  const { marginsMm, fontSizePt, maxWidthRem, lineHeight } = layout;
+  return `
 :root {
   --ink: #111;
   --muted: #444;
@@ -22,7 +29,7 @@ const DEFAULT_CSS = `
 
 @page {
   size: A4;
-  margin: 24mm 24mm 30mm;
+  margin: ${marginsMm.top}mm ${marginsMm.right}mm ${marginsMm.bottom}mm ${marginsMm.left}mm;
 }
 
 * {
@@ -30,7 +37,7 @@ const DEFAULT_CSS = `
 }
 
 html {
-  font-size: 10.25pt;
+  font-size: ${fontSizePt}pt;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
@@ -41,15 +48,14 @@ body {
   font-family: "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho",
     "MS PMincho", serif;
   font-weight: 400;
-  line-height: 1.9;
+  line-height: ${lineHeight};
   letter-spacing: 0.03em;
   font-feature-settings: "palt" 1;
   text-rendering: optimizeLegibility;
 }
 
-/* 学術文書風: 読みやすいカラム幅で中央寄せ */
 main.paper {
-  max-width: 38rem;
+  max-width: ${maxWidthRem}rem;
   margin: 0 auto;
   text-align: justify;
   text-justify: inter-character;
@@ -66,7 +72,6 @@ h1, h2, h3, h4 {
   break-after: avoid-page;
 }
 
-/* 先頭の h1 を表題（中央・二重下線） */
 main.paper > h1:first-child {
   text-align: center;
   font-size: 1.55rem;
@@ -83,7 +88,6 @@ main.paper > h1:not(:first-child) {
   border-bottom: 1px solid var(--ink);
 }
 
-/* 節番号の見た目を付けやすいよう、h2 は下線で区切る */
 h2 {
   font-size: 1.12rem;
   font-weight: 700;
@@ -110,7 +114,6 @@ p {
   widows: 3;
 }
 
-/* 見出し直後以外は字下げ（横書き学術文の一般的な体裁） */
 main.paper p + p {
   text-indent: 1em;
 }
@@ -243,13 +246,18 @@ figcaption {
   line-height: 1.6;
 }
 `;
+}
 
 /**
  * @param {string} bodyHtml marked で得た本文 HTML
- * @param {{ title?: string }} [opts]
+ * @param {{ title?: string, layout?: import("./layout-options.mjs").LayoutOptions | Record<string, unknown> }} [opts]
  */
 export function buildPrintHtml(bodyHtml, opts = {}) {
   const title = opts.title ?? "Document";
+  const layout = resolveLayout(
+    opts.layout && typeof opts.layout === "object" ? opts.layout : {}
+  );
+  const css = buildPaperCss(layout);
   return `<!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -259,7 +267,7 @@ export function buildPrintHtml(bodyHtml, opts = {}) {
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="${GOOGLE_FONTS_HREF}" />
-  <style>${DEFAULT_CSS}</style>
+  <style>${css}</style>
 </head>
 <body>
   <main class="paper">

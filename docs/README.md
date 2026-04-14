@@ -16,10 +16,16 @@ npx playwright install chromium
 
 初回は Chromium のダウンロードが走ります。
 
-## 使い方
+## 使い方（CLI）
 
 ```bash
 node src/cli.mjs examples/sample.md -o out.pdf
+```
+
+オプションでレイアウトを変えられます（省略時は **約 9pt・上・左右 14mm・下 24mm** 前後の既定）:
+
+```bash
+node src/cli.mjs report.md -o out.pdf --font-size 8.5 --margin 12 --margin-bottom 22
 ```
 
 グローバルに `bin` を使う場合は `npm link` 後:
@@ -30,6 +36,14 @@ md-to-pdf-jp notes.md --title "会議メモ"
 ```
 
 `-o` を省略すると、入力ファイルと同じディレクトリに `<basename>.pdf` が出力されます。
+
+## Web UI（ブラウザで調整・PDF 保存）
+
+```bash
+npm run web
+```
+
+ブラウザで `http://127.0.0.1:3847/` を開き、スライダーでフォントサイズ・余白・行間・カラム幅を変えながら **プレビュー**し、**PDF をダウンロード**できます。ポートは環境変数 `PORT` で変更可能です。
 
 ## レイアウト
 

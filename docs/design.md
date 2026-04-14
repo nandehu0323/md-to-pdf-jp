@@ -3,8 +3,9 @@
 ## 全体構成
 
 1. **Markdown → HTML**: `marked`（GFM 有効）で本文 HTML を生成
-2. **HTML ラップ**: 印刷向け CSS と Google Fonts の `<link>` を付与した完全な HTML
-3. **HTML → PDF**: Playwright の Chromium で `page.setContent` 後 `page.pdf` を実行
+2. **HTML ラップ**: `layout-options.mjs` で正規化した余白・フォントサイズ等を反映した CSS と Google Fonts の `<link>` を付与した完全な HTML（`build-html.mjs`）
+3. **HTML → PDF**: Playwright の Chromium で `page.setContent` 後 `page.pdf` を実行（`render-pdf.mjs`）
+4. **Web UI**: `express` で静的ファイル（`public/`）と `POST /api/preview-html`・`POST /api/pdf` を提供。CLI と同じレンダラを共有する
 
 ## フォント選定
 
@@ -13,8 +14,9 @@
 
 ## スタイル方針（論文調レイアウト）
 
-- `main.paper` で最大幅（約 38rem）の単カラムを中央配置し、読み幅を抑える
-- 本文は `text-align: justify`（日本語の行末そろえ）とやや広い行間（約 1.9）
+- `main.paper` で最大幅（既定 **約 36rem**、Web/CLI で変更可）の単カラムを中央配置し、読み幅を抑える
+- 本文フォントサイズは既定 **約 9pt**、上・左右余白は既定 **約 14mm**、下余白はページ番号分を含め **約 24mm**（いずれも `resolveLayout` でクランプ）
+- 本文は `text-align: justify`（日本語の行末そろえ）と行間（既定 **約 1.85**、可変）
 - 先頭の `# 見出し` は表題として中央揃え・二重下線。`##` は下線で節を区切る
 - 段落は見出し直後を除き先頭字下げ（`p + p`）を付与
 - 引用（`blockquote`）は要旨・抄録風に上下罫線のみの落ち着いた体裁
@@ -25,6 +27,7 @@
 
 - `playwright`: Headless Chromium で印刷品質の PDF を得る
 - `marked`: 軽量な Markdown パーサ
+- `express`: Web UI の HTTP サーバ
 
 ## 制約・注意
 
