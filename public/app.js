@@ -10,6 +10,7 @@ const marginMm = document.getElementById("marginMm");
 const marginBottomMm = document.getElementById("marginBottomMm");
 const maxWidthRem = document.getElementById("maxWidthRem");
 const lineHeight = document.getElementById("lineHeight");
+const latexArticleStyle = document.getElementById("latexArticleStyle");
 
 const fontSizeVal = document.getElementById("fontSizeVal");
 const marginVal = document.getElementById("marginVal");
@@ -17,15 +18,21 @@ const marginBottomVal = document.getElementById("marginBottomVal");
 const maxWidthVal = document.getElementById("maxWidthVal");
 const lineHeightVal = document.getElementById("lineHeightVal");
 
-const SAMPLE = `# サンプル表題
+const SAMPLE = `# サンプル表題（LaTeX 風を ON にすると要旨が1段・本文が2段）
 
-これは **Web UI** から生成したプレビューです。右のスライダーで余白やフォントサイズを変えられます。
+> **Abstract.** 最初の \`##\` より前が **1段組**（表題・要旨）。チェックを入れると **2段組** と節番号が付きます。
 
-## 節見出し
+## Introduction
 
-段落の字下げや行間は、サーバー側の CSS と同じ設定が iframe に反映されます。
+吾輩は猫である。名前はまだない。どこで生れたかとんと見当がつかぬ。何でも薄暗いじめじめした所でニャーニャー泣いていたことだけは記憶している。
 
-> 引用は抄録風の上下罫線です。
+### サブ節の例
+
+小見出しには 1.1 のように番号が付きます。
+
+## Related Work
+
+続きの節は番号が 2 から始まります。表やコードは段をまたいで通し幅になります。
 
 `;
 
@@ -38,6 +45,7 @@ function readLayout() {
     marginBottomMm: Number(marginBottomMm.value),
     maxWidthRem: Number(maxWidthRem.value),
     lineHeight: Number(lineHeight.value),
+    latexArticleStyle: Boolean(latexArticleStyle.checked),
   };
 }
 
@@ -194,6 +202,9 @@ async function init() {
       if (L.marginBottomMm != null) marginBottomMm.value = String(L.marginBottomMm);
       if (L.maxWidthRem != null) maxWidthRem.value = String(L.maxWidthRem);
       if (L.lineHeight != null) lineHeight.value = String(L.lineHeight);
+      if (typeof L.latexArticleStyle === "boolean") {
+        latexArticleStyle.checked = L.latexArticleStyle;
+      }
     }
   } catch {
     /* 既定 HTML のまま */
@@ -212,6 +223,8 @@ async function init() {
     syncLabels();
     schedulePreview();
   }));
+
+  latexArticleStyle.addEventListener("change", schedulePreview);
 
   docTitle.addEventListener("input", schedulePreview);
   mdEl.addEventListener("input", schedulePreview);

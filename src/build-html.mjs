@@ -4,6 +4,7 @@
  */
 
 import { resolveLayout } from "./layout-options.mjs";
+import { wrapLatexArticleBody } from "./latex-article.mjs";
 
 const GOOGLE_FONTS_HREF =
   "https://fonts.googleapis.com/css2?" +
@@ -17,7 +18,9 @@ const GOOGLE_FONTS_HREF =
  * @param {import("./layout-options.mjs").LayoutOptions} layout
  */
 export function buildPaperCss(layout) {
-  const { marginsMm, fontSizePt, maxWidthRem, lineHeight } = layout;
+  const { marginsMm, fontSizePt, maxWidthRem, lineHeight, latexArticleStyle } =
+    layout;
+  const latexBlock = latexArticleStyle ? latexArticleCss() : "";
   return `
 :root {
   --ink: #111;
@@ -245,6 +248,108 @@ figcaption {
   text-align: center;
   line-height: 1.6;
 }
+${latexBlock}
+`;
+}
+
+/** LaTeX article 風（表題ブロック 1 段・以降 2 段・節番号）。`.latex-article` 付与時のみ有効 */
+function latexArticleCss() {
+  return `
+/* --- LaTeX article 風（HTML/CSS での近似） --- */
+main.paper.latex-article {
+  max-width: 100%;
+}
+
+main.paper.latex-article .latex-masthead {
+  margin-bottom: 0.75rem;
+}
+
+main.paper.latex-article .latex-masthead > h1:first-child {
+  text-align: center;
+  font-size: 1.55rem;
+  font-weight: 700;
+  margin: 0 0 1.25rem;
+  padding: 0 0 1rem;
+  border-bottom: 3px double var(--ink);
+}
+
+main.paper.latex-article .latex-masthead > h1:not(:first-child) {
+  font-size: 1.2rem;
+  margin: 1.25rem 0 0.65rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--ink);
+  text-align: left;
+}
+
+main.paper.latex-article .latex-masthead blockquote {
+  margin: 0.6em 0.5em 1rem;
+  padding: 0.65em 0.9em;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.02);
+  font-size: 0.96em;
+  line-height: 1.75;
+}
+
+main.paper.latex-article .latex-masthead blockquote p {
+  text-indent: 0 !important;
+}
+
+main.paper.latex-article .latex-columns {
+  counter-reset: latex-section;
+  column-count: 2;
+  column-gap: 5.5mm;
+  column-fill: balance;
+  text-align: justify;
+  text-justify: inter-character;
+}
+
+main.paper.latex-article .latex-columns h2,
+main.paper.latex-article .latex-columns h3 {
+  break-after: avoid;
+  page-break-after: avoid;
+  column-span: none;
+}
+
+main.paper.latex-article .latex-columns h2 {
+  counter-increment: latex-section;
+  counter-reset: latex-subsection;
+  border-bottom: none;
+  padding-bottom: 0;
+  font-size: 1.08rem;
+  font-weight: 700;
+  margin: 1rem 0 0.5rem;
+  text-align: left;
+}
+
+main.paper.latex-article .latex-columns h2::before {
+  content: counter(latex-section) " ";
+  font-weight: 700;
+}
+
+main.paper.latex-article .latex-columns h3 {
+  counter-increment: latex-subsection;
+  font-size: 0.98rem;
+  font-weight: 700;
+  margin: 0.85rem 0 0.4rem;
+}
+
+main.paper.latex-article .latex-columns h3::before {
+  content: counter(latex-section) "." counter(latex-subsection) " ";
+  font-weight: 700;
+}
+
+main.paper.latex-article .latex-columns table,
+main.paper.latex-article .latex-columns pre,
+main.paper.latex-article .latex-columns figure {
+  column-span: all;
+  margin-top: 0.75em;
+  margin-bottom: 0.75em;
+}
+
+main.paper.latex-article .latex-columns pre {
+  text-align: left;
+}
 `;
 }
 
@@ -257,6 +362,17 @@ export function buildPrintHtml(bodyHtml, opts = {}) {
   const layout = resolveLayout(
     opts.layout && typeof opts.layout === "object" ? opts.layout : {}
   );
+
+  let inner = bodyHtml;
+  let mainClass = "paper";
+  if (layout.latexArticleStyle) {
+    const { html, wrapped } = wrapLatexArticleBody(bodyHtml);
+    if (wrapped) {
+      inner = html;
+      mainClass = "paper latex-article";
+    }
+  }
+
   const css = buildPaperCss(layout);
   return `<!DOCTYPE html>
 <html lang="ja">
@@ -270,8 +386,8 @@ export function buildPrintHtml(bodyHtml, opts = {}) {
   <style>${css}</style>
 </head>
 <body>
-  <main class="paper">
-${bodyHtml}
+  <main class="${mainClass}">
+${inner}
   </main>
 </body>
 </html>`;

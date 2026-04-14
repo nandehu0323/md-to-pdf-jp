@@ -17,6 +17,7 @@ function parseArgs(argv) {
     fontSizePt: null,
     marginMm: null,
     marginBottomMm: null,
+    latex: false,
   };
   const rest = [...argv];
   while (rest.length) {
@@ -41,6 +42,10 @@ function parseArgs(argv) {
       args.marginBottomMm = Number(rest.shift());
       continue;
     }
+    if (a === "--latex") {
+      args.latex = true;
+      continue;
+    }
     if (a === "-h" || a === "--help") {
       args.help = true;
       continue;
@@ -60,7 +65,7 @@ function printHelp() {
 
 使用法:
   md-to-pdf-jp <入力.md> [-o <出力.pdf>] [--title <文書タイトル>]
-    [--font-size <pt>] [--margin <mm>] [--margin-bottom <mm>]
+    [--font-size <pt>] [--margin <mm>] [--margin-bottom <mm>] [--latex]
 
 例:
   md-to-pdf-jp report.md -o report.pdf
@@ -72,6 +77,9 @@ function printHelp() {
 フォント（Google Fonts）:
   本文・見出し: Noto Serif JP（論文調の明朝）
   コード: JetBrains Mono
+
+--latex:
+  LaTeX article 風（先頭の ## より前を1段、以降を2段＋節番号）。## が無いと通常レイアウトのままです。
 
 Web UI:
   npm run web のあと http://127.0.0.1:3847/ でブラウザから調整・PDF 保存
@@ -103,6 +111,7 @@ async function main() {
   if (Number.isFinite(args.marginMm)) layout.marginMm = args.marginMm;
   if (Number.isFinite(args.marginBottomMm))
     layout.marginBottomMm = args.marginBottomMm;
+  if (args.latex) layout.latexArticleStyle = true;
 
   const pdfBuffer = await markdownToPdfBuffer(md, { title, layout });
   await writeFile(outputPath, pdfBuffer);

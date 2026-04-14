@@ -28,6 +28,14 @@ node src/cli.mjs examples/sample.md -o out.pdf
 node src/cli.mjs report.md -o out.pdf --font-size 8.5 --margin 12 --margin-bottom 22
 ```
 
+**LaTeX の `article` に近い体裁**（表題〜先頭の `##` まで1段、以降2段＋節番号）:
+
+```bash
+node src/cli.mjs paper.md -o paper.pdf --latex
+```
+
+`##` が1つも無い Markdown では分割できないため、通常の1段レイアウトのままです。Web UI でも同様のチェックボックスがあります。
+
 グローバルに `bin` を使う場合は `npm link` 後:
 
 ```bash

@@ -7,6 +7,15 @@
 3. **HTML → PDF**: Playwright の Chromium で `page.setContent` 後 `page.pdf` を実行（`render-pdf.mjs`）
 4. **Web UI**: `express` で静的ファイル（`public/`）と `POST /api/preview-html`・`POST /api/pdf` を提供。CLI と同じレンダラを共有する
 
+### LaTeX article 風レイアウト（近似）
+
+本物の LaTeX エンジンではないが、**HTML/CSS でよくある論文の見た目**に寄せられる。
+
+- オプション `latexArticleStyle`（CLI は `--latex`、Web はチェックボックス）が有効なとき、Markdown 本文を **先頭の `##` より前**と **以降**に分割する（`latex-article.mjs`）。
+- 前半を **1段組**（表題・抄録用）、後半を **2段組**（`column-count: 2`）。図・表・コードは `column-span: all` で段抜きを試みる。
+- `##` には `1` `2` …、`###` には `1.1` … の **CSS カウンタ**で番号を付与（LaTeX の section / subsection に相当する見た目）。
+- **限界**: 数式・文献自動ソート・参照クロスリファレンス・厳密なハイフネーション等は HTML では再現しない。完全な LaTeX 品質が必要なら `.tex` を別途使う前提。
+
 ## フォント選定
 
 - **Noto Serif JP**: 本文・見出し。学術文書で一般的な明朝系で統一

@@ -12,6 +12,7 @@
  *   marginBottomMm: number,
  *   marginsMm: { top: number, right: number, bottom: number, left: number },
  *   footerFontPt: number,
+ *   latexArticleStyle: boolean,
  * }} LayoutOptions
  */
 
@@ -47,6 +48,8 @@ export function resolveLayout(partial = {}) {
     Math.min(11, fontSizePt - 0.5)
   );
 
+  const latexArticleStyle = boolish(partial.latexArticleStyle, false);
+
   return {
     fontSizePt,
     maxWidthRem,
@@ -55,12 +58,21 @@ export function resolveLayout(partial = {}) {
     marginBottomMm: marginsMm.bottom,
     marginsMm,
     footerFontPt,
+    latexArticleStyle,
   };
 }
 
 function clampNum(v, min, max, fallback) {
   const n = typeof v === "number" && !Number.isNaN(v) ? v : fallback;
   return Math.min(max, Math.max(min, n));
+}
+
+/** @param {unknown} v */
+function boolish(v, fallback) {
+  if (typeof v === "boolean") return v;
+  if (v === "true" || v === 1 || v === "1") return true;
+  if (v === "false" || v === 0 || v === "0") return false;
+  return fallback;
 }
 
 /**
@@ -77,6 +89,7 @@ export function parseLayoutFromBody(raw) {
     marginMm: num(o.marginMm),
     marginBottomMm: num(o.marginBottomMm),
     footerFontPt: num(o.footerFontPt),
+    latexArticleStyle: o.latexArticleStyle,
   });
 }
 
