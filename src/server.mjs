@@ -26,7 +26,11 @@ app.use(
 );
 
 app.get("/api/defaults", (_req, res) => {
-  res.json({ layout: resolveLayout() });
+  res.json({
+    layout: resolveLayout(),
+    renderer: "pandoc",
+    pdfEngine: "auto",
+  });
 });
 
 app.post("/api/preview-html", async (req, res) => {
@@ -50,7 +54,18 @@ app.post("/api/pdf", async (req, res) => {
     const title =
       typeof req.body?.title === "string" ? req.body.title : "document";
     const layout = parseLayoutFromBody(req.body?.layout);
-    const buf = await markdownToPdfBuffer(markdown, { title, layout });
+    const renderer =
+      req.body?.renderer === "playwright" ? "playwright" : "pandoc";
+    const pdfEngine =
+      typeof req.body?.pdfEngine === "string" && req.body.pdfEngine
+        ? req.body.pdfEngine
+        : "auto";
+    const buf = await markdownToPdfBuffer(markdown, {
+      title,
+      layout,
+      renderer,
+      pdfEngine,
+    });
     const filename = safeFilename(title) + ".pdf";
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(

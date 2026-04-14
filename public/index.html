@@ -22,6 +22,24 @@
         </label>
 
         <label class="field">
+          <span>PDFエンジン</span>
+          <select id="renderer">
+            <option value="pandoc" selected>高品質（Pandoc + Tectonic）</option>
+            <option value="playwright">簡易（Playwright CSS近似）</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Pandoc PDF engine</span>
+          <select id="pdfEngine">
+            <option value="auto" selected>auto（xelatex > lualatex > tectonic）</option>
+            <option value="xelatex">xelatex</option>
+            <option value="lualatex">lualatex</option>
+            <option value="tectonic">tectonic</option>
+          </select>
+        </label>
+
+        <label class="field">
           <span>フォントサイズ <strong id="fontSizeVal">9</strong> pt</span>
           <input
             type="range"

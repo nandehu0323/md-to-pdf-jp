@@ -5,6 +5,8 @@ Markdown を入力に、日本語向けに組版した PDF を出力する CLI �
 ## 必要環境
 
 - Node.js 18 以上
+- Pandoc（`pandoc` コマンド）
+- PDF エンジン（推奨: `xelatex`。代替: `lualatex` / `tectonic`）
 
 ## セットアップ
 
@@ -14,7 +16,14 @@ npm install
 npx playwright install chromium
 ```
 
-初回は Chromium のダウンロードが走ります。
+高品質ルート（Pandoc + XeLaTeX）を使う場合は、別途 TeX エンジンが必要です。macOS の例:
+
+```bash
+brew install pandoc
+brew install --cask basictex
+# 端末を再起動後
+which xelatex
+```
 
 ## 使い方（CLI）
 
@@ -22,10 +31,19 @@ npx playwright install chromium
 node src/cli.mjs examples/sample.md -o out.pdf
 ```
 
+既定は **高品質ルート（Pandoc）** です。環境に応じて PDF エンジンは `auto`（`xelatex > lualatex > tectonic`）で解決されます。
+
 オプションでレイアウトを変えられます（省略時は **約 9pt・上・左右 14mm・下 24mm** 前後の既定）:
 
 ```bash
 node src/cli.mjs report.md -o out.pdf --font-size 8.5 --margin 12 --margin-bottom 22
+```
+
+レンダラ/エンジンを明示する例:
+
+```bash
+node src/cli.mjs report.md -o out.pdf --renderer pandoc --pdf-engine xelatex
+node src/cli.mjs report.md -o out.pdf --renderer playwright
 ```
 
 **LaTeX の `article` に近い体裁**（表題〜先頭の `##` まで1段、以降2段＋節番号）:
@@ -58,6 +76,8 @@ npm run web
 ```
 
 ブラウザで `http://127.0.0.1:3847/` を開き、スライダーでフォントサイズ・余白・行間・カラム幅を変えながら **プレビュー**し、**PDF をダウンロード**できます。**Markdown（.md）ファイルの読み込み**（ファイル選択または編集欄へのドラッグ＆ドロップ）にも対応しています。ポートは環境変数 `PORT` で変更可能です。
+
+Web UI でも `高品質（Pandoc）` / `簡易（Playwright）` の切替ができます。
 
 ## レイアウト
 

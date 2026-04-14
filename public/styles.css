@@ -102,6 +102,14 @@ body {
   font-size: 0.95rem;
 }
 
+.field select {
+  padding: 0.45rem 0.55rem;
+  border: 1px solid #c8cdd5;
+  border-radius: 6px;
+  font-size: 0.92rem;
+  background: #fff;
+}
+
 .field input[type="range"] {
   width: 100%;
 }

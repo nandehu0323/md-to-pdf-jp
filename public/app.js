@@ -2,6 +2,8 @@ const mdEl = document.getElementById("md");
 const mdFile = document.getElementById("mdFile");
 const preview = document.getElementById("preview");
 const docTitle = document.getElementById("docTitle");
+const renderer = document.getElementById("renderer");
+const pdfEngine = document.getElementById("pdfEngine");
 const btnPdf = document.getElementById("btnPdf");
 const statusEl = document.getElementById("status");
 
@@ -62,6 +64,10 @@ function syncLatexSubOptions() {
   latexAutoSectionNumbers.disabled = !on;
 }
 
+function syncRendererOptions() {
+  pdfEngine.disabled = renderer.value !== "pandoc";
+}
+
 function syncLabels() {
   fontSizeVal.textContent = fontSizePt.value;
   marginVal.textContent = marginMm.value;
@@ -86,6 +92,8 @@ async function runPreview() {
         markdown: mdEl.value,
         title: docTitle.value || "preview",
         layout: readLayout(),
+        renderer: renderer.value || "pandoc",
+        pdfEngine: pdfEngine.value || "auto",
       }),
     });
     if (!res.ok) {
@@ -129,6 +137,8 @@ async function downloadPdf() {
         markdown: mdEl.value,
         title: docTitle.value || "document",
         layout: readLayout(),
+        renderer: renderer.value || "pandoc",
+        pdfEngine: pdfEngine.value || "auto",
       }),
     });
     if (!res.ok) {
@@ -237,6 +247,12 @@ async function init() {
       if (typeof L.latexAutoSectionNumbers === "boolean") {
         latexAutoSectionNumbers.checked = L.latexAutoSectionNumbers;
       }
+      if (typeof data.renderer === "string") {
+        renderer.value = data.renderer;
+      }
+      if (typeof data.pdfEngine === "string") {
+        pdfEngine.value = data.pdfEngine;
+      }
     }
   } catch {
     /* 既定 HTML のまま */
@@ -245,6 +261,7 @@ async function init() {
   mdEl.value = SAMPLE;
   syncLabels();
   syncLatexSubOptions();
+  syncRendererOptions();
 
   [
     fontSizePt,
@@ -268,6 +285,11 @@ async function init() {
   latexAutoSectionNumbers.addEventListener("change", schedulePreview);
 
   docTitle.addEventListener("input", schedulePreview);
+  renderer.addEventListener("change", () => {
+    syncRendererOptions();
+    schedulePreview();
+  });
+  pdfEngine.addEventListener("change", schedulePreview);
   mdEl.addEventListener("input", schedulePreview);
   btnPdf.addEventListener("click", downloadPdf);
   setupFileUpload();

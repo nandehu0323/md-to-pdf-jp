@@ -19,6 +19,8 @@ function parseArgs(argv) {
     marginBottomMm: null,
     latex: false,
     latexNoAutoNumbers: false,
+    renderer: "pandoc",
+    pdfEngine: "auto",
   };
   const rest = [...argv];
   while (rest.length) {
@@ -51,6 +53,14 @@ function parseArgs(argv) {
       args.latexNoAutoNumbers = true;
       continue;
     }
+    if (a === "--renderer") {
+      args.renderer = rest.shift() ?? "pandoc";
+      continue;
+    }
+    if (a === "--pdf-engine") {
+      args.pdfEngine = rest.shift() ?? "tectonic";
+      continue;
+    }
     if (a === "-h" || a === "--help") {
       args.help = true;
       continue;
@@ -70,6 +80,7 @@ function printHelp() {
 
 使用法:
   md-to-pdf-jp <入力.md> [-o <出力.pdf>] [--title <文書タイトル>]
+    [--renderer pandoc|playwright] [--pdf-engine auto|xelatex|lualatex|tectonic]
     [--font-size <pt>] [--margin <mm>] [--margin-bottom <mm>] [--latex]
 
 例:
@@ -87,6 +98,10 @@ function printHelp() {
   LaTeX article 風（先頭の ## より前を1段、以降を2段。節番号は CSS で付与）。
 --latex-no-auto-numbers:
   --latex と併用。見出しに「1」「1.1」を自動付与しない（本文が「## 1.」形式のとき向け）。
+--renderer:
+  PDF生成エンジン。既定は pandoc（高品質）。互換用に playwright も指定可能。
+--pdf-engine:
+  Pandoc で使う PDF エンジン。既定 auto（xelatex > lualatex > tectonic）。
 
 Web UI:
   npm run web のあと http://127.0.0.1:3847/ でブラウザから調整・PDF 保存
@@ -121,7 +136,16 @@ async function main() {
   if (args.latex) layout.latexArticleStyle = true;
   if (args.latexNoAutoNumbers) layout.latexAutoSectionNumbers = false;
 
-  const pdfBuffer = await markdownToPdfBuffer(md, { title, layout });
+  const renderer =
+    args.renderer === "playwright" || args.renderer === "pandoc"
+      ? args.renderer
+      : "pandoc";
+  const pdfBuffer = await markdownToPdfBuffer(md, {
+    title,
+    layout,
+    renderer,
+    pdfEngine: args.pdfEngine ?? "auto",
+  });
   await writeFile(outputPath, pdfBuffer);
 
   console.log(`PDF を出力しました: ${outputPath}`);
