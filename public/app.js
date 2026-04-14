@@ -123,6 +123,66 @@ async function downloadPdf() {
   }
 }
 
+/** @param {File} file */
+async function loadMarkdownFile(file) {
+  const name = file.name || "";
+  const lower = name.toLowerCase();
+  const isMd =
+    lower.endsWith(".md") ||
+    lower.endsWith(".markdown") ||
+    file.type === "text/markdown" ||
+    file.type === "text/x-markdown" ||
+    file.type === "text/plain";
+  if (!isMd) {
+    statusEl.textContent =
+      "対応しているのは .md / .markdown などの Markdown ファイルです";
+    return;
+  }
+  const text = await file.text();
+  mdEl.value = text;
+  const base = name.replace(/\.[^.]+$/, "").trim() || "document";
+  docTitle.value = base;
+  statusEl.textContent = "ファイルを読み込みました: " + name;
+  schedulePreview();
+}
+
+function setupFileUpload() {
+  mdFile.addEventListener("change", async () => {
+    const f = mdFile.files && mdFile.files[0];
+    mdFile.value = "";
+    if (!f) return;
+    try {
+      await loadMarkdownFile(f);
+    } catch (e) {
+      statusEl.textContent = "読み込みエラー: " + e.message;
+    }
+  });
+
+  ["dragenter", "dragover"].forEach((ev) => {
+    mdEl.addEventListener(ev, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      mdEl.classList.add("drop-target");
+    });
+  });
+  ["dragleave", "drop"].forEach((ev) => {
+    mdEl.addEventListener(ev, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      mdEl.classList.remove("drop-target");
+    });
+  });
+  mdEl.addEventListener("drop", async (e) => {
+    const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    if (!f) return;
+    try {
+      await loadMarkdownFile(f);
+    } catch (err) {
+      statusEl.textContent = "読み込みエラー: " + err.message;
+    }
+  });
+}
+
 async function init() {
   try {
     const res = await fetch("/api/defaults");
