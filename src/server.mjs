@@ -15,7 +15,15 @@ const port = Number(process.env.PORT) || 3847;
 const app = express();
 app.disable("x-powered-by");
 app.use(express.json({ limit: "2mb" }));
-app.use(express.static(publicDir));
+app.use(
+  express.static(publicDir, {
+    setHeaders(res, filePath) {
+      if (/\.(html|js|css)$/i.test(filePath)) {
+        res.setHeader("Cache-Control", "no-store, max-age=0");
+      }
+    },
+  })
+);
 
 app.get("/api/defaults", (_req, res) => {
   res.json({ layout: resolveLayout() });

@@ -367,6 +367,28 @@ main.paper.latex-article .latex-columns figure {
 main.paper.latex-article .latex-columns pre {
   text-align: left;
 }
+
+/*
+ * 画面プレビュー（screen）: 高さが未指定のままだと、多くのブラウザで multicol が
+ * 「1段に縦に流すだけ」になり 2段に見えない。印刷/PDF は @media print で元に戻す。
+ */
+@media screen {
+  main.paper.latex-article .latex-columns {
+    max-height: min(90vh, 1400px);
+    overflow-y: auto;
+    column-fill: auto;
+    -webkit-column-fill: auto;
+  }
+}
+
+@media print {
+  main.paper.latex-article .latex-columns {
+    max-height: none !important;
+    overflow: visible !important;
+    column-fill: balance;
+    -webkit-column-fill: balance;
+  }
+}
 `;
 }
 
