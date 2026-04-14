@@ -1,0 +1,20 @@
+{
+  "name": "md-to-pdf-jp",
+  "version": "1.0.0",
+  "description": "Markdown を日本語向けに美しく組版した PDF に変換する CLI",
+  "type": "module",
+  "bin": {
+    "md-to-pdf-jp": "./src/cli.mjs"
+  },
+  "scripts": {
+    "start": "node src/cli.mjs",
+    "pdf": "node src/cli.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "marked": "^15.0.0",
+    "playwright": "^1.49.0"
+  }
+}
