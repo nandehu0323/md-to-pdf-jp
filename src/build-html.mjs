@@ -328,6 +328,8 @@ main.paper.latex-article .latex-columns {
   column-count: 2;
   -webkit-column-gap: 5.5mm;
   column-gap: 5.5mm;
+  -webkit-column-rule: 0.5pt solid #d2d2d2;
+  column-rule: 0.5pt solid #d2d2d2;
   -webkit-column-fill: balance;
   column-fill: balance;
   text-align: justify;
